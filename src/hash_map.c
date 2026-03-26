@@ -2,19 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "basic_types.h"
-struct string{
-  int size;
-  char *value;
-};
-struct node{
-  String key;
-  String value;
-  Node *next;
-};
-struct hash_map{
-  int size;
-  Node **buckets;
-};
 HashMap * initialize_hashmap(){
     HashMap *h_m = malloc(sizeof(HashMap));
     if(!h_m){
