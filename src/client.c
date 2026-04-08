@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-int client(){
+int main(){
     int socket_d;
 
     if((socket_d = socket(AF_INET,SOCK_STREAM,0)) < 0){  // FIX

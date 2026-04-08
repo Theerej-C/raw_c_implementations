@@ -3,8 +3,9 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-int server(){
+#include <pthread.h>
+void* client_handler(void* client_fd);
+int main(){
     int socket_d,new_client;
 
     if((socket_d = socket(AF_INET,SOCK_STREAM,0)) < 0){
@@ -33,23 +34,27 @@ int server(){
             perror("accept");
             break;
         }
-        
-        while(1){    
-            char recv_message[255] = {0};  // FIX
-
-            int bytes = recv(new_client, recv_message, sizeof(recv_message)-1, 0); // FIX
-
-            if(bytes <= 0){
-                break;
-            }
-
-            recv_message[bytes] = '\0'; // FIX
-            printf("Received from the client: %s\n", recv_message);
-        }
-
-        close(new_client); // FIX
+        pthread_t pid;
+        pthread_create(&pid, NULL, client_handler,(void*)(intptr_t)new_client);
     }
-
+    
     close(socket_d);
     return 0;
+}
+void* client_handler(void* client_fd){
+    int c_fd = (int)(intptr_t)client_fd;
+    while(1){    
+        char recv_message[255] = {0};  // FIX
+
+        int bytes = recv(c_fd, recv_message, sizeof(recv_message)-1, 0); // FIX
+
+        if(bytes <= 0){
+            break;
+        }
+
+        recv_message[bytes] = '\0'; // FIX
+        printf("Received from the client: %s\n", recv_message);
+    }
+    close(c_fd);
+    return NULL;
 }
